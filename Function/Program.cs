@@ -7,8 +7,7 @@ var host = new HostBuilder()
     .ConfigureFunctionsWorkerDefaults()
     .ConfigureServices(s => {
         s.AddTransient<MessageHandler>();
-    }
-    )
+    })
     .Build();
 
 host.Run();

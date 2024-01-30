@@ -5,7 +5,7 @@ using Polly;
 
 namespace FunctionVolumeTest.MessageProducer.ResourceAccess.ServiceBus;
 
-public class ServiceBus
+public class ServiceBus : IAsyncDisposable
 {
     private IOptions<MessageBusSettings> settings;
     private readonly ServiceBusSender _sender;
@@ -25,8 +25,6 @@ public class ServiceBus
 
     public async Task SendAsync(IEnumerable<string> messages, string contentType)
     {
-        try
-        {
             var batch = await _sender.CreateMessageBatchAsync().ConfigureAwait(false);
             var i = 0;
             foreach (var message in messages.ToList())
@@ -43,12 +41,6 @@ public class ServiceBus
                 batch.TryAddMessage(m);
             }
             await SendMessages(batch);
-        }
-        finally
-        {
-            //await _client.DisposeAsync().ConfigureAwait(false);
-            //await _sender.DisposeAsync().ConfigureAwait(false);
-        }
     }
 
     private async Task SendMessages(ServiceBusMessageBatch batch)
@@ -63,5 +55,9 @@ public class ServiceBus
         }
     }
 
-
+    public async ValueTask DisposeAsync()
+    {
+            await _client.DisposeAsync().ConfigureAwait(false);
+            await _sender.DisposeAsync().ConfigureAwait(false);
+    }
 }

@@ -11,7 +11,7 @@ class Program
     static async Task Main(string[] args)
     {
         var builder = Host.CreateDefaultBuilder(args);
-
+        
         builder.ConfigureServices((hostContext,services) => {
             services.Configure<MessageBusSettings>(hostContext.Configuration.GetSection("MessageBusSettings"));
             services.AddSingleton<ServiceBus>();
